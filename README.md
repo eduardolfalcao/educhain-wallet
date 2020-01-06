@@ -1,1 +1,1 @@
-# edublockchain-wallet
+# educhain-wallet
