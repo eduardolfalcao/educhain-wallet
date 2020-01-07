@@ -1,10 +1,10 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.security.KeyFactory;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.Signature;
+import java.security.SignatureException;
 
 import br.com.educhainwallet.setup.PropertiesManager;
 
@@ -12,26 +12,32 @@ public class Main {
 	
 	public static void main(String[] args){
 		
-		String privKeyPath = PropertiesManager.getInstance().getPrivKeyPath();
-		FileInputStream keyfis;
 		try {
-			keyfis = new FileInputStream(privKeyPath);
-			byte[] encKey = new byte[keyfis.available()];
-			keyfis.read(encKey);
-			keyfis.close();
+			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DSA");
+			keyPairGen.initialize(2048);
+			KeyPair pair = keyPairGen.generateKeyPair();
 			
-			PKCS8EncodedKeySpec privKeySpec = new PKCS8EncodedKeySpec(encKey);
-
-			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			PrivateKey privKey = keyFactory.generatePrivate(privKeySpec);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			PrivateKey privKey = pair.getPrivate();
+			
+			Signature sign = Signature.getInstance("SHA256withDSA");
+			sign.initSign(privKey);
+			
+			byte[] bytes = "Hello how are you".getBytes();
+			sign.update(bytes);
+			
+			byte[] signature = sign.sign();
+			
+			sign.initVerify(pair.getPublic());
+			sign.update(bytes);
+			
+			boolean bool = sign.verify(signature);
+			System.out.println(bool);
 		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		catch (InvalidKeySpecException e) {
+		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
