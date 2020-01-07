@@ -13,6 +13,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import br.com.educhainwallet.Signer;
+import br.com.educhainwallet.model.Transaction;
 import br.com.educhainwallet.setup.PropertiesManager;
 
 public class Main {
@@ -29,38 +31,13 @@ public class Main {
 		PublicKey pubKey = readPubKey();
 		PrivateKey privKey = readPrivKey();
 		
-
-//		try {
-//			KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DSA");
-//			keyPairGen.initialize(2048);
-//			KeyPair pair = keyPairGen.generateKeyPair();
-//
-//			PrivateKey privKey = pair.getPrivate();
-//
-//			Signature sign = Signature.getInstance("SHA256withDSA");
-//			sign.initSign(privKey);
-//
-//			byte[] bytes = "Hello how are you".getBytes();
-//			sign.update(bytes);
-//
-//			byte[] signature = sign.sign();
-//
-//			sign.initVerify(pair.getPublic());
-//			sign.update(bytes);
-//
-//			boolean bool = sign.verify(signature);
-//			System.out.println(bool);
-//		} catch (NoSuchAlgorithmException e) {
-//			e.printStackTrace();
-//		} catch (InvalidKeyException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (SignatureException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-
-	}	
+		Transaction trans = new Transaction("Eduardo", "João", 35, 10, pubKey);
+		byte[] signature = Signer.sign(trans, privKey);
+		
+		System.out.println(Signer.verify(trans, signature));
+	
+	}
+	
 
 	private static void writeKeyPair() {
 		KeyPairGenerator keyPairGen;

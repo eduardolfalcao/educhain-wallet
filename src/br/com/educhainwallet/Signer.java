@@ -26,15 +26,23 @@ public class Signer {
 			sign.update(transBytes);
 			
 			signature = sign.sign();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (InvalidKeyException e) {
-			e.printStackTrace();
-		} catch (SignatureException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
 		}
 				
 		return signature;
+	}
+	
+	public static boolean verify(Transaction trans, byte[] signature) {
+		try {
+			Signature sign = Signature.getInstance("SHA256withDSA");
+			sign.initVerify(trans.getPubKey());			
+			sign.update(convertTransactionToByteArray(trans));			
+			return sign.verify(signature);
+		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
+			e.printStackTrace();
+		}
+		return false;		
 	}
 	
 	private static byte[] convertTransactionToByteArray(Transaction trans) {
@@ -48,7 +56,6 @@ public class Signer {
           out.flush();
           transInBytes = bos.toByteArray();
         } catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
           try {

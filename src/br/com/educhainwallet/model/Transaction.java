@@ -1,6 +1,7 @@
 package br.com.educhainwallet.model;
 
 import java.io.Serializable;
+import java.security.PublicKey;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -16,28 +17,27 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 		private String sender;
 		private String receiver;
 		private double amount, fee;
-		private String pubKey, signature;
+		private PublicKey pubKey;
 
 		private String uniqueID;
 
 		@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 		private Date creationTime;
 
-		public Transaction(String sender, String receiver, double amount, double fee, String pubKey, String signature) {
+		public Transaction(String sender, String receiver, double amount, double fee, PublicKey pubKey) {
 			this.sender = sender;
 			this.receiver = receiver;
 			this.amount = amount;
 			this.fee = fee;
 			this.pubKey = pubKey;
-			this.signature = signature;
 			
 			this.creationTime = new Date(System.currentTimeMillis());		
 			this.uniqueID = UUID.randomUUID().toString();
 		}
 
-		public Transaction(String sender, String receiver, double amount, double fee, Date creationTime, String pubKey,
-				String signature, String uniqueID) {
-			this(sender, receiver, amount, fee, pubKey, signature);
+		public Transaction(String sender, String receiver, double amount, double fee, Date creationTime, PublicKey pubKey,
+				String uniqueID) {
+			this(sender, receiver, amount, fee, pubKey);
 			this.creationTime = creationTime;
 			this.uniqueID = uniqueID;
 		}
@@ -47,10 +47,10 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 			if (creationTime != null)
 				return "\nUniqueId: " + uniqueID + "; Sender: " + sender + "; Receiver: " + receiver + "; Amount: "
 						+ amount + "; " + "Fee: " + fee + "; Creation time: " + formatter.format(creationTime)
-						+ "; PubKey: "+pubKey+ "; Signature: "+ signature;
+						+ "; PubKey (hashCode): "+pubKey.hashCode()+ ";";
 			else
 				return "\nUniqueId: " + uniqueID + "; Sender: " + sender + "; Receiver: " + receiver + "; Amount: "
-						+ amount + "; " + "Fee: " + fee + "; PubKey: "+pubKey+ "; Signature: "+ signature;
+						+ amount + "; " + "Fee: " + fee + "; PubKey (hashCode): "+pubKey.hashCode()+ ";";
 		}
 
 		public String getSender() {
@@ -85,20 +85,12 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 			this.fee = fee;
 		}
 		
-		public String getPubKey() {
+		public PublicKey getPubKey() {
 			return pubKey;
 		}
 		
-		public void setPubKey(String pubKey) {
+		public void setPubKey(PublicKey pubKey) {
 			this.pubKey = pubKey;
-		}
-		
-		public String getSignature() {
-			return signature;
-		}
-		
-		public void setSignature(String signature) {
-			this.signature = signature;
 		}
 
 		public Date getCreationTime() {
