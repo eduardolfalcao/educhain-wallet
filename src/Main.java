@@ -21,25 +21,34 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		File privKeyFile = new File(getPrivKeyFilename());
-		File pubKeyFile = new File(getPubKeyFilename());
-		if (!privKeyFile.exists() || !pubKeyFile.exists()) {
+		File privKeySenderFile = new File(getPrivKeyFilename(PropertiesManager.getInstance().getWalletSender()));
+		File pubKeySenderFile = new File(getPubKeyFilename(PropertiesManager.getInstance().getWalletSender()));
+		if (!privKeySenderFile.exists() || !pubKeySenderFile.exists()) {
 			// generate and write keypair
-			writeKeyPair();
+			writeKeyPair(PropertiesManager.getInstance().getWalletSender());
 		}
 		
-		PublicKey pubKey = readPubKey();
-		PrivateKey privKey = readPrivKey();
+		File pubKeyReceiverFile = new File(getPubKeyFilename(PropertiesManager.getInstance().getWalletReceiver()));
+		if (!pubKeyReceiverFile.exists()) {
+			writeKeyPair(PropertiesManager.getInstance().getWalletReceiver());
+		}
 		
-		Transaction trans = new Transaction("Eduardo", "João", 35, 10, pubKey);
-		byte[] signature = Signer.sign(trans, privKey);
+		PublicKey pubKeySender = readPubKey(PropertiesManager.getInstance().getWalletSender());
+		PrivateKey privKeySender = readPrivKey(PropertiesManager.getInstance().getWalletSender());
+		
+		PublicKey pubKeyReceiver = readPubKey(PropertiesManager.getInstance().getWalletReceiver());
+		
+		Transaction trans = new Transaction(pubKeySender, pubKeyReceiver, 35, 10);
+		byte[] signature = Signer.sign(trans, privKeySender);
+		
+		//this line would fail the verification
+		//trans.setSender(pubKeyReceiver);
 		
 		System.out.println(Signer.verify(trans, signature));
 	
 	}
-	
 
-	private static void writeKeyPair() {
+	private static void writeKeyPair(String walletOwner) {
 		KeyPairGenerator keyPairGen;
 		try {
 			keyPairGen = KeyPairGenerator.getInstance("DSA");
@@ -49,12 +58,12 @@ public class Main {
 			System.out.println(keyPairGen.getAlgorithm());
 
 			byte[] key = pair.getPublic().getEncoded();
-			FileOutputStream keyfos = new FileOutputStream(getPubKeyFilename());
+			FileOutputStream keyfos = new FileOutputStream(getPubKeyFilename(walletOwner));
 			keyfos.write(key);
 			keyfos.close();
 
 			key = pair.getPrivate().getEncoded();
-			keyfos = new FileOutputStream(getPrivKeyFilename());
+			keyfos = new FileOutputStream(getPrivKeyFilename(walletOwner));
 			keyfos.write(key);
 			keyfos.close();
 		} catch (NoSuchAlgorithmException | IOException e) {
@@ -62,8 +71,8 @@ public class Main {
 		}
 	}
 	
-	private static PublicKey readPubKey() {
-		byte [] pubKeyBytes = readKey(getPubKeyFilename());
+	private static PublicKey readPubKey(String walletOwner) {
+		byte [] pubKeyBytes = readKey(getPubKeyFilename(walletOwner));
 		X509EncodedKeySpec specPub = new X509EncodedKeySpec(pubKeyBytes);
 		KeyFactory kf;
 		PublicKey pubKey = null;
@@ -71,15 +80,14 @@ public class Main {
 			kf = KeyFactory.getInstance("DSA");
 			pubKey = kf.generatePublic(specPub);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return pubKey;
 		
 	}
 	
-	private static PrivateKey readPrivKey() {
-		byte [] privKeyBytes = readKey(getPrivKeyFilename());
+	private static PrivateKey readPrivKey(String walletOwner) {
+		byte [] privKeyBytes = readKey(getPrivKeyFilename(walletOwner));
 		PKCS8EncodedKeySpec specPriv = new PKCS8EncodedKeySpec(privKeyBytes);
 		KeyFactory kf;
 		PrivateKey privKey = null;
@@ -87,7 +95,6 @@ public class Main {
 			kf = KeyFactory.getInstance("DSA");
 			privKey = kf.generatePrivate(specPriv);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return privKey;
@@ -111,12 +118,12 @@ public class Main {
 		return keyBytes;
 	}
 
-	private static String getPrivKeyFilename() {
-		return PropertiesManager.getInstance().getWalletOwner() + PropertiesManager.getInstance().getPrivKeyExtension();
+	private static String getPrivKeyFilename(String walletOwner) {
+		return walletOwner + PropertiesManager.getInstance().getPrivKeyExtension();
 	}
 
-	private static String getPubKeyFilename() {
-		return PropertiesManager.getInstance().getWalletOwner() + PropertiesManager.getInstance().getPubKeyExtension();
+	private static String getPubKeyFilename(String walletOwner) {
+		return walletOwner + PropertiesManager.getInstance().getPubKeyExtension();
 	}
 
 }

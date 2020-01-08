@@ -10,154 +10,143 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Transaction implements Comparable<Transaction>, Serializable {
 
-		private static final long serialVersionUID = -8270876610064570814L;
+	private static final long serialVersionUID = -8270876610064570814L;
 
-		public static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	public static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-		private String sender;
-		private String receiver;
-		private double amount, fee;
-		private PublicKey pubKey;
+	private PublicKey sender, receiver;
+	private double amount, fee;
 
-		private String uniqueID;
+	private String uniqueID;
 
-		@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-		private Date creationTime;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	private Date creationTime;
 
-		public Transaction(String sender, String receiver, double amount, double fee, PublicKey pubKey) {
-			this.sender = sender;
-			this.receiver = receiver;
-			this.amount = amount;
-			this.fee = fee;
-			this.pubKey = pubKey;
-			
-			this.creationTime = new Date(System.currentTimeMillis());		
-			this.uniqueID = UUID.randomUUID().toString();
-		}
+	public Transaction(PublicKey sender, PublicKey receiver, double amount, double fee) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.amount = amount;
+		this.fee = fee;
 
-		public Transaction(String sender, String receiver, double amount, double fee, Date creationTime, PublicKey pubKey,
-				String uniqueID) {
-			this(sender, receiver, amount, fee, pubKey);
-			this.creationTime = creationTime;
-			this.uniqueID = uniqueID;
-		}
+		this.creationTime = new Date(System.currentTimeMillis());
+		this.uniqueID = UUID.randomUUID().toString();
+	}
 
-		@Override
-		public String toString() {
-			if (creationTime != null)
-				return "\nUniqueId: " + uniqueID + "; Sender: " + sender + "; Receiver: " + receiver + "; Amount: "
-						+ amount + "; " + "Fee: " + fee + "; Creation time: " + formatter.format(creationTime)
-						+ "; PubKey (hashCode): "+pubKey.hashCode()+ ";";
-			else
-				return "\nUniqueId: " + uniqueID + "; Sender: " + sender + "; Receiver: " + receiver + "; Amount: "
-						+ amount + "; " + "Fee: " + fee + "; PubKey (hashCode): "+pubKey.hashCode()+ ";";
-		}
+	public Transaction(PublicKey sender, PublicKey receiver, double amount, double fee, Date creationTime,
+			String uniqueID) {
+		this(sender, receiver, amount, fee);
+		this.creationTime = creationTime;
+		this.uniqueID = uniqueID;
+	}
 
-		public String getSender() {
-			return sender;
-		}
+	@Override
+	public String toString() {
+		if (creationTime != null)
+			return "\nUniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode()
+					+ "; Amount: " + amount + "; " + "Fee: " + fee + "; Creation time: "
+					+ formatter.format(creationTime) + ";";
+		else
+			return "\nUniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode() + "; Amount: " + amount
+					+ "; " + "Fee: " + fee + ";";
+	}
 
-		public void setSender(String sender) {
-			this.sender = sender;
-		}
+	public PublicKey getSender() {
+		return sender;
+	}
 
-		public String getReceiver() {
-			return receiver;
-		}
+	public void setSender(PublicKey sender) {
+		this.sender = sender;
+	}
 
-		public void setReceiver(String receiver) {
-			this.receiver = receiver;
-		}
+	public PublicKey getReceiver() {
+		return receiver;
+	}
 
-		public double getAmount() {
-			return amount;
-		}
+	public void setReceiver(PublicKey receiver) {
+		this.receiver = receiver;
+	}
 
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
+	public double getAmount() {
+		return amount;
+	}
 
-		public double getFee() {
-			return fee;
-		}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
 
-		public void setFee(double fee) {
-			this.fee = fee;
-		}
-		
-		public PublicKey getPubKey() {
-			return pubKey;
-		}
-		
-		public void setPubKey(PublicKey pubKey) {
-			this.pubKey = pubKey;
-		}
+	public double getFee() {
+		return fee;
+	}
 
-		public Date getCreationTime() {
-			return creationTime;
-		}
+	public void setFee(double fee) {
+		this.fee = fee;
+	}
 
-		public void setCreationTime(Date creationTime) {
-			this.creationTime = creationTime;
-		}
+	public Date getCreationTime() {
+		return creationTime;
+	}
 
-		public String getUniqueID() {
-			return uniqueID;
-		}
+	public void setCreationTime(Date creationTime) {
+		this.creationTime = creationTime;
+	}
 
-		public void setUniqueID(String uniqueID) {
-			this.uniqueID = uniqueID;
-		}
+	public String getUniqueID() {
+		return uniqueID;
+	}
 
-		@Override
-		public int hashCode() {
-			return uniqueID.hashCode();
-		}
+	public void setUniqueID(String uniqueID) {
+		this.uniqueID = uniqueID;
+	}
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Transaction other = (Transaction) obj;
-			if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
-				return false;
-			if (Double.doubleToLongBits(fee) != Double.doubleToLongBits(other.fee))
-				return false;
-			if (receiver == null) {
-				if (other.receiver != null)
-					return false;
-			} else if (!receiver.equals(other.receiver))
-				return false;
-			if (sender == null) {
-				if (other.sender != null)
-					return false;
-			} else if (!sender.equals(other.sender))
-				return false;
-			if (uniqueID == null) {
-				if (other.uniqueID != null)
-					return false;
-			} else if (!uniqueID.equals(other.uniqueID))
-				return false;
+	@Override
+	public int hashCode() {
+		return uniqueID.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		}
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Transaction other = (Transaction) obj;
+		if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
+			return false;
+		if (Double.doubleToLongBits(fee) != Double.doubleToLongBits(other.fee))
+			return false;
+		if (receiver == null) {
+			if (other.receiver != null)
+				return false;
+		} else if (!receiver.equals(other.receiver))
+			return false;
+		if (sender == null) {
+			if (other.sender != null)
+				return false;
+		} else if (!sender.equals(other.sender))
+			return false;
+		if (uniqueID == null) {
+			if (other.uniqueID != null)
+				return false;
+		} else if (!uniqueID.equals(other.uniqueID))
+			return false;
+		return true;
+	}
 
-		@Override
-		public int compareTo(Transaction t) {
-			if (this.fee < t.getFee())
+	@Override
+	public int compareTo(Transaction t) {
+		if (this.fee < t.getFee())
+			return 1;
+		else if (this.fee > t.getFee())
+			return -1;
+		else {
+			// transactions are only equal if they have the same uniqueID
+			if (uniqueID.equals(t.getUniqueID()))
+				return 0;
+			else
 				return 1;
-			else if (this.fee > t.getFee())
-				return -1;
-			else {
-				// transactions are only equal if they have the same uniqueID
-				if (uniqueID.equals(t.getUniqueID()))
-					return 0;
-				else
-					return 1;
-			}
 		}
-	
+	}
+
 }

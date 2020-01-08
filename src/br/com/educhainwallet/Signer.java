@@ -36,7 +36,7 @@ public class Signer {
 	public static boolean verify(Transaction trans, byte[] signature) {
 		try {
 			Signature sign = Signature.getInstance("SHA256withDSA");
-			sign.initVerify(trans.getPubKey());			
+			sign.initVerify(trans.getSender());			
 			sign.update(convertTransactionToByteArray(trans));			
 			return sign.verify(signature);
 		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
