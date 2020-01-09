@@ -1,7 +1,6 @@
 package br.com.educhainwallet.setup;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -52,13 +51,6 @@ public class PropertiesManager {
 	
 	public String getPubKeyExtension() {
 		return props.getProperty(PropertiesManager.PUB_KEY_EXTENSION);
-	}
-	
-	
-	
-	public static void main(String[] args) {
-		PropertiesManager prop = PropertiesManager.getInstance();
-		System.out.println(prop.getMemPoolHost());
 	}
 
 }
