@@ -42,11 +42,11 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 	@Override
 	public String toString() {
 		if (creationTime != null)
-			return "\nUniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode()
+			return "UniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode()
 					+ "; Amount: " + amount + "; " + "Fee: " + fee + "; Creation time: "
 					+ formatter.format(creationTime) + ";";
 		else
-			return "\nUniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode() + "; Amount: " + amount
+			return "UniqueId: " + uniqueID + "; Sender: " + sender.hashCode() + "; Receiver: " + receiver.hashCode() + "; Amount: " + amount
 					+ "; " + "Fee: " + fee + ";";
 	}
 
