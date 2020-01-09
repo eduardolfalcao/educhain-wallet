@@ -19,10 +19,12 @@ import br.com.educhainwallet.setup.PropertiesManager;
 
 public class KeyUtils {
 	
+	private static final String KEYGEN_ALGORITHM = PropertiesManager.getInstance().getKeyGenAlgorithm();
+	
 	public static void writeKeyPair(String walletOwner) {
 		KeyPairGenerator keyPairGen;
 		try {
-			keyPairGen = KeyPairGenerator.getInstance("DSA");
+			keyPairGen = KeyPairGenerator.getInstance(KEYGEN_ALGORITHM);
 			keyPairGen.initialize(2048);
 			KeyPair pair = keyPairGen.generateKeyPair();
 			
@@ -48,7 +50,7 @@ public class KeyUtils {
 		KeyFactory kf;
 		PublicKey pubKey = null;
 		try {
-			kf = KeyFactory.getInstance("DSA");
+			kf = KeyFactory.getInstance(KEYGEN_ALGORITHM);
 			pubKey = kf.generatePublic(specPub);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
@@ -63,7 +65,7 @@ public class KeyUtils {
 		KeyFactory kf;
 		PrivateKey privKey = null;
 		try {
-			kf = KeyFactory.getInstance("DSA");
+			kf = KeyFactory.getInstance(KEYGEN_ALGORITHM);
 			privKey = kf.generatePrivate(specPriv);
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
