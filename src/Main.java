@@ -34,7 +34,7 @@ public class Main {
 		//this line would fail the verification
 		//trans.setSender(pubKeyReceiver);
 		
-		System.out.println(Signer.verify(trans, signature));
+		Signer.verify(trans, signature);
 	
 	}
 

@@ -10,9 +10,13 @@ import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 
+import org.apache.log4j.Logger;
+
 import br.com.educhainwallet.model.Transaction;
 
 public class Signer {
+	
+	private static final Logger LOGGER = Logger.getLogger(Signer.class);
 	
 	public static byte[] sign(Transaction trans, PrivateKey privKey) {
 		
@@ -26,6 +30,8 @@ public class Signer {
 			sign.update(transBytes);
 			
 			signature = sign.sign();
+			LOGGER.debug("Transaction "+trans+" had just been signed with privkey(hashCode) "+privKey.hashCode());
+			LOGGER.info("Transaction had just been signed.");
 		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
 		}
@@ -37,8 +43,16 @@ public class Signer {
 		try {
 			Signature sign = Signature.getInstance("SHA256withDSA");
 			sign.initVerify(trans.getSender());			
-			sign.update(convertTransactionToByteArray(trans));			
-			return sign.verify(signature);
+			sign.update(convertTransactionToByteArray(trans));
+			boolean result = sign.verify(signature);
+			if(result) {
+				LOGGER.debug("Transaction "+trans+" had just been verified.");
+				LOGGER.info("Transaction had just been verified.");
+			} else {
+				LOGGER.debug("Transaction "+trans+" couldn't be verified.");
+				LOGGER.info("Transaction couldn't be verified.");
+			}
+			return result;
 		} catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException e) {
 			e.printStackTrace();
 		}

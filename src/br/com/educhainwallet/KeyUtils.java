@@ -15,10 +15,13 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.apache.log4j.Logger;
+
 import br.com.educhainwallet.setup.PropertiesManager;
 
 public class KeyUtils {
 	
+	private static final Logger LOGGER = Logger.getLogger(KeyUtils.class);
 	private static final String KEYGEN_ALGORITHM = PropertiesManager.getInstance().getKeyGenAlgorithm();
 	
 	public static void writeKeyPair(String walletOwner) {
@@ -28,17 +31,19 @@ public class KeyUtils {
 			keyPairGen.initialize(2048);
 			KeyPair pair = keyPairGen.generateKeyPair();
 			
-			System.out.println(keyPairGen.getAlgorithm());
+			LOGGER.debug("Algorithm used for key generation: "+keyPairGen.getAlgorithm());			
 
 			byte[] key = pair.getPublic().getEncoded();
 			FileOutputStream keyfos = new FileOutputStream(getPubKeyFilename(walletOwner));
 			keyfos.write(key);
 			keyfos.close();
+			LOGGER.info("Public key for "+walletOwner+" had just been written.");
 
 			key = pair.getPrivate().getEncoded();
 			keyfos = new FileOutputStream(getPrivKeyFilename(walletOwner));
 			keyfos.write(key);
 			keyfos.close();
+			LOGGER.info("Private key for "+walletOwner+" had just been written.");
 		} catch (NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
 		}
@@ -52,6 +57,7 @@ public class KeyUtils {
 		try {
 			kf = KeyFactory.getInstance(KEYGEN_ALGORITHM);
 			pubKey = kf.generatePublic(specPub);
+			LOGGER.info("Public key for "+walletOwner+" had just been read.");
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
 		}
@@ -67,6 +73,7 @@ public class KeyUtils {
 		try {
 			kf = KeyFactory.getInstance(KEYGEN_ALGORITHM);
 			privKey = kf.generatePrivate(specPriv);
+			LOGGER.info("Private key for "+walletOwner+" had just been read.");
 		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
 			e.printStackTrace();
 		}
