@@ -42,7 +42,7 @@ public class Signer {
 	public static boolean verify(Transaction trans, byte[] signature) {
 		try {
 			Signature sign = Signature.getInstance("SHA256withDSA");
-			sign.initVerify(trans.getSender());			
+			sign.initVerify(trans.getPubKey(trans.getSender()));
 			sign.update(convertTransactionToByteArray(trans));
 			boolean result = sign.verify(signature);
 			if(result) {

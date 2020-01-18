@@ -28,11 +28,11 @@ public class Main {
 		
 		PublicKey pubKeyReceiver = KeyUtils.readPubKey(PropertiesManager.getInstance().getWalletReceiver());
 		
-		Transaction trans = new Transaction(pubKeySender, pubKeyReceiver, 35, 10);
+		Transaction trans = new Transaction(pubKeySender.getEncoded(), pubKeyReceiver.getEncoded(), 35, 10);
 		byte[] signature = Signer.sign(trans, privKeySender);
 		
 		//this line would fail the verification
-		//trans.setSender(pubKeyReceiver);
+		//trans.setSender(pubKeyReceiver.getEncoded());
 		
 		Signer.verify(trans, signature);
 	
