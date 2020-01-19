@@ -17,8 +17,7 @@ import br.com.educhainwallet.setup.PropertiesManager;
 
 public class Transaction implements Comparable<Transaction>, Serializable {
 
-	private static final long serialVersionUID = -8270876610064570814L;	
-	private static final Base64.Decoder b64d = Base64.getDecoder();
+	private static final long serialVersionUID = -8270876610064570814L;
 	private static KeyFactory keyFactory;
 
 	static{
@@ -31,7 +30,7 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 
 	public static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	private byte[] sender, receiver;
+	private byte[] sender, receiver, signature;
 	private double amount, fee;
 
 	private String uniqueID;
@@ -81,6 +80,14 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 
 	public void setReceiver(byte[] receiver) {
 		this.receiver = receiver;
+	}
+	
+	public byte[] getSignature() {
+		return signature;
+	}
+	
+	public void setSignature(byte[] signature) {
+		this.signature = signature;
 	}
 	
 	public PublicKey getPubKey(byte[] key) {
@@ -150,6 +157,11 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 			if (other.sender != null)
 				return false;
 		} else if (!sender.equals(other.sender))
+			return false;
+		if (signature == null) {
+			if (other.signature != null)
+				return false;
+		} else if (!signature.equals(other.signature))
 			return false;
 		if (uniqueID == null) {
 			if (other.uniqueID != null)
