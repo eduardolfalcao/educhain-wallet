@@ -6,6 +6,7 @@ import br.com.educhainwallet.KeyUtils;
 import br.com.educhainwallet.Signer;
 import br.com.educhainwallet.model.Transaction;
 import br.com.educhainwallet.setup.PropertiesManager;
+import br.com.educhainwallet.system.communication.MemPoolUtils;
 
 public class Main {
 
@@ -24,34 +25,35 @@ public class Main {
 		if (!pubKeyReceiverFile.exists()) {
 			KeyUtils.writeKeyPair(PropertiesManager.getInstance().getWalletReceiver());
 		}
-		
+
 		PublicKey pubKeySender = KeyUtils.readPubKey(PropertiesManager.getInstance().getWalletSender());
 		PrivateKey privKeySender = KeyUtils.readPrivKey(PropertiesManager.getInstance().getWalletSender());
 
 		PublicKey pubKeyReceiver = KeyUtils.readPubKey(PropertiesManager.getInstance().getWalletReceiver());
 
-		signAndVerifyExample(pubKeySender, privKeySender, pubKeyReceiver);
+		Transaction trans = new Transaction(pubKeySender.getEncoded(), pubKeyReceiver.getEncoded(),
+				PropertiesManager.getInstance().getTransAmount(), PropertiesManager.getInstance().getTransFee());
+		
+		if(signAndVerify(trans, privKeySender))
+			sendTransaction(trans, privKeySender);
 	}
 
-//	public static void sendTransaction(PublicKey pubKeySender, PrivateKey privKeySender, PublicKey pubKeyReceiver,
-//			Transaction trans) {
-//
-//		trans.setSender(pubKeySender.getEncoded());
-//		trans.setReceiver(pubKeyReceiver.getEncoded());
-//		byte[] signature = Signer.sign(trans, privKeySender);
-//		trans.setSignature(signature);
-//
-//	}
+	public static void sendTransaction(Transaction trans, PrivateKey privKeySender) {
 
-	public static void signAndVerifyExample(PublicKey pubKeySender, PrivateKey privKeySender, PublicKey pubKeyReceiver) {
-		Transaction trans = new Transaction(pubKeySender.getEncoded(), pubKeyReceiver.getEncoded(), 35, 10);
+		byte[] signature = Signer.sign(trans, privKeySender);
+		trans.setSignature(signature);
+		MemPoolUtils.sendTransaction(trans);
+
+	}
+
+	public static boolean signAndVerify(Transaction trans, PrivateKey privKeySender) {
 		byte[] signature = Signer.sign(trans, privKeySender);
 		trans.setSignature(signature);
 
 		// this line would fail the verification
 		// trans.setSender(pubKeyReceiver.getEncoded());
 
-		Signer.verify(trans, signature);
+		return Signer.verify(trans, signature);
 	}
 
 }

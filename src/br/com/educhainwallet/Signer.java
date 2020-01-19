@@ -40,7 +40,7 @@ public class Signer {
 	}
 
 	public static boolean verify(Transaction trans, byte[] signature) {
-		//let the signature as null
+		//let the signature of clone as null
 		Transaction transClone = new Transaction(trans.getSender(), trans.getReceiver(), trans.getAmount(),
 				trans.getFee(), trans.getCreationTime(), trans.getUniqueID());
 

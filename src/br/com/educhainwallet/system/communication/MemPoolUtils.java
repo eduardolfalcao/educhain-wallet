@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpMethod;
@@ -32,12 +33,12 @@ public class MemPoolUtils {
 	}
 	
 	public static boolean sendTransaction(Transaction trans) {
-		HttpURLConnection con = openConnection(URL_MEM_POOL, HttpMethod.PUT.toString());
+		HttpURLConnection con = openConnection(URL_MEM_POOL, HttpMethod.POST.toString());
 		
 		JsonObject transJson = new JsonObject();
-		transJson.addProperty("sender", trans.getSender().toString());
-		transJson.addProperty("receiver", trans.getReceiver().toString());
-		transJson.addProperty("signature", trans.getSignature().toString());
+		transJson.addProperty("sender", Base64.getEncoder().encodeToString(trans.getSender()));
+		transJson.addProperty("receiver", Base64.getEncoder().encodeToString(trans.getReceiver()));
+		transJson.addProperty("signature", Base64.getEncoder().encodeToString(trans.getSignature()));
 		transJson.addProperty("amount", trans.getAmount());
 		transJson.addProperty("fee", trans.getFee());
 		transJson.addProperty("creationTime", Transaction.formatter.format(trans.getCreationTime()));

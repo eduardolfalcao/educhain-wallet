@@ -7,6 +7,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
@@ -151,17 +152,17 @@ public class Transaction implements Comparable<Transaction>, Serializable {
 		if (receiver == null) {
 			if (other.receiver != null)
 				return false;
-		} else if (!receiver.equals(other.receiver))
+		} else if (!Arrays.equals(sender,other.sender))
 			return false;
 		if (sender == null) {
 			if (other.sender != null)
 				return false;
-		} else if (!sender.equals(other.sender))
+		} else if (!Arrays.equals(sender,other.sender))
 			return false;
 		if (signature == null) {
 			if (other.signature != null)
 				return false;
-		} else if (!signature.equals(other.signature))
+		} else if (!Arrays.equals(signature,other.signature))
 			return false;
 		if (uniqueID == null) {
 			if (other.uniqueID != null)

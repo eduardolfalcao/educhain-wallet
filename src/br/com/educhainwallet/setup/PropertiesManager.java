@@ -12,6 +12,8 @@ public class PropertiesManager {
 	private static final String KEYGEN_ALGORITHM = "keygen_algorithm";	
 	private static final String PRIV_KEY_EXTENSION = "priv_key_extension";
 	private static final String PUB_KEY_EXTENSION = "pub_key_extension";
+	private static final String TRANS_AMOUNT = "trans_amount";
+	private static final String TRANS_FEE = "trans_fee";
 	
 	private static PropertiesManager instance = new PropertiesManager();
 	private Properties props;
@@ -51,6 +53,14 @@ public class PropertiesManager {
 	
 	public String getPubKeyExtension() {
 		return props.getProperty(PropertiesManager.PUB_KEY_EXTENSION);
+	}
+	
+	public int getTransAmount() {
+		return Integer.parseInt(props.getProperty(PropertiesManager.TRANS_AMOUNT));
+	}
+	
+	public int getTransFee() {
+		return Integer.parseInt(props.getProperty(PropertiesManager.TRANS_FEE));
 	}
 
 }
