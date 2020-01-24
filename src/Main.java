@@ -1,6 +1,13 @@
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
+import java.util.Base64;
 
 import br.com.educhainwallet.KeyUtils;
 import br.com.educhainwallet.Signer;
@@ -30,10 +37,19 @@ public class Main {
 		PrivateKey privKeySender = KeyUtils.readPrivKey(PropertiesManager.getInstance().getWalletSender());
 
 		PublicKey pubKeyReceiver = KeyUtils.readPubKey(PropertiesManager.getInstance().getWalletReceiver());
-
-		Transaction trans = new Transaction(pubKeySender.getEncoded(), pubKeyReceiver.getEncoded(),
-				PropertiesManager.getInstance().getTransAmount(), PropertiesManager.getInstance().getTransFee());
 		
+//		System.out.println("###### Hashcode of pubKeySender: "+pubKeySender.hashCode());
+		
+		System.out.println("###### Hashcode of pubKeyReceiver.getEncoded(): "+Arrays.hashCode(pubKeyReceiver.getEncoded()));
+				
+		String pubKeyReceiverString = Base64.getEncoder().encodeToString(pubKeyReceiver.getEncoded());		
+		byte[] backToBytes = Base64.getDecoder().decode(pubKeyReceiverString);
+		
+		System.out.println("###### Hashcode of backToBytes: "+Arrays.hashCode(backToBytes));
+				
+		Transaction trans = new Transaction(pubKeySender.getEncoded(), pubKeyReceiver.getEncoded(), null,
+				PropertiesManager.getInstance().getTransAmount(), PropertiesManager.getInstance().getTransFee());
+				
 		if(signAndVerify(trans, privKeySender))
 			sendTransaction(trans, privKeySender);
 	}
@@ -42,7 +58,12 @@ public class Main {
 
 		byte[] signature = Signer.sign(trans, privKeySender);
 		trans.setSignature(signature);
-		MemPoolUtils.sendTransaction(trans);
+		try {
+			MemPoolUtils.sendTransaction(trans);
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -53,7 +74,7 @@ public class Main {
 		// this line would fail the verification
 		// trans.setSender(pubKeyReceiver.getEncoded());
 
-		return Signer.verify(trans, signature);
+		return Signer.verify(trans);
 	}
 
 }

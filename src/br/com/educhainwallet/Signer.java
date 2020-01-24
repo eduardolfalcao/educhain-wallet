@@ -9,6 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.util.Arrays;
+import java.util.Base64;
 
 import org.apache.log4j.Logger;
 
@@ -27,6 +29,10 @@ public class Signer {
 			sign.initSign(privKey);
 
 			byte[] transBytes = Signer.convertTransactionToByteArray(trans);
+			
+			System.out.println("##### Transaction: "+trans);
+			System.out.println("##### Transaction bytes hashcode: "+Arrays.hashCode(transBytes));
+			
 			sign.update(transBytes);
 
 			signature = sign.sign();
@@ -39,16 +45,12 @@ public class Signer {
 		return signature;
 	}
 
-	public static boolean verify(Transaction trans, byte[] signature) {
-		//let the signature of clone as null
-		Transaction transClone = new Transaction(trans.getSender(), trans.getReceiver(), trans.getAmount(),
-				trans.getFee(), trans.getCreationTime(), trans.getUniqueID());
-
+	public static boolean verify(Transaction trans) {
 		try {
 			Signature sign = Signature.getInstance("SHA256withDSA");
 			sign.initVerify(trans.getPubKey(trans.getSender()));
-			sign.update(convertTransactionToByteArray(transClone));
-			boolean result = sign.verify(signature);
+			sign.update(convertTransactionToByteArray(trans));
+			boolean result = sign.verify(trans.getSignature());
 			if (result) {
 				LOGGER.debug("Transaction " + trans + " had just been verified.");
 				LOGGER.info("Transaction had just been verified.");
@@ -63,26 +65,9 @@ public class Signer {
 		return false;
 	}
 
-	private static byte[] convertTransactionToByteArray(Transaction trans) {
-		byte[] transInBytes = null;
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ObjectOutput out = null;
-		try {
-			out = new ObjectOutputStream(bos);
-			out.writeObject(trans);
-			out.flush();
-			transInBytes = bos.toByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				bos.close();
-			} catch (IOException ex) {
-			}
-		}
-
-		return transInBytes;
+	public static byte[] convertTransactionToByteArray(Transaction trans) {
+		System.out.println("Trans: "+trans);
+		return trans.toString().getBytes();
 	}
 
 }

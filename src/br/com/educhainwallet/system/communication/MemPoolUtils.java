@@ -2,8 +2,12 @@ package br.com.educhainwallet.system.communication;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Base64;
 
 import org.apache.log4j.Logger;
@@ -32,8 +36,10 @@ public class MemPoolUtils {
 		return con;
 	}
 	
-	public static boolean sendTransaction(Transaction trans) {
+	public static boolean sendTransaction(Transaction trans) throws InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		HttpURLConnection con = openConnection(URL_MEM_POOL, HttpMethod.POST.toString());
+		
+		System.out.println("########## Signature hashCode: "+Arrays.hashCode(trans.getSignature()));
 		
 		JsonObject transJson = new JsonObject();
 		transJson.addProperty("sender", Base64.getEncoder().encodeToString(trans.getSender()));
@@ -41,7 +47,7 @@ public class MemPoolUtils {
 		transJson.addProperty("signature", Base64.getEncoder().encodeToString(trans.getSignature()));
 		transJson.addProperty("amount", trans.getAmount());
 		transJson.addProperty("fee", trans.getFee());
-		transJson.addProperty("creationTime", Transaction.formatter.format(trans.getCreationTime()));
+//		transJson.addProperty("creationTime", Transaction.formatter.format(trans.getCreationTime()));
 		transJson.addProperty("uniqueID", trans.getUniqueID());
 		
 		con.setDoOutput(true);
