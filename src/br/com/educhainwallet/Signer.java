@@ -1,16 +1,10 @@
 package br.com.educhainwallet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.util.Arrays;
-import java.util.Base64;
 
 import org.apache.log4j.Logger;
 
@@ -26,14 +20,8 @@ public class Signer {
 		byte[] signature = null;
 		try {
 			sign = Signature.getInstance("SHA256withDSA");
-			sign.initSign(privKey);
-
-			byte[] transBytes = Signer.convertTransactionToByteArray(trans);
-			
-			System.out.println("##### Transaction: "+trans);
-			System.out.println("##### Transaction bytes hashcode: "+Arrays.hashCode(transBytes));
-			
-			sign.update(transBytes);
+			sign.initSign(privKey);			
+			sign.update(trans.toString().getBytes());
 
 			signature = sign.sign();
 			LOGGER.debug("Transaction " + trans + " had just been signed with privkey(hashCode) " + privKey.hashCode());
@@ -49,7 +37,7 @@ public class Signer {
 		try {
 			Signature sign = Signature.getInstance("SHA256withDSA");
 			sign.initVerify(trans.getPubKey(trans.getSender()));
-			sign.update(convertTransactionToByteArray(trans));
+			sign.update(trans.toString().getBytes());
 			boolean result = sign.verify(trans.getSignature());
 			if (result) {
 				LOGGER.debug("Transaction " + trans + " had just been verified.");
@@ -63,11 +51,6 @@ public class Signer {
 			e.printStackTrace();
 		}
 		return false;
-	}
-
-	public static byte[] convertTransactionToByteArray(Transaction trans) {
-		System.out.println("Trans: "+trans);
-		return trans.toString().getBytes();
 	}
 
 }
