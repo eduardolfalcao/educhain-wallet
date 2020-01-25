@@ -9,7 +9,8 @@ public class PropertiesManager {
 	private static final String MEM_POOL_HOST = "mem_pool_host";
 	private static final String WALLET_SENDER = "wallet_sender";
 	private static final String WALLET_RECEIVER = "wallet_receiver";
-	private static final String KEYGEN_ALGORITHM = "keygen_algorithm";	
+	private static final String KEYGEN_ALGORITHM = "keygen_algorithm";
+	private static final String SIGNATURE_ALGORITHM = "signature_algorithm";	
 	private static final String PRIV_KEY_EXTENSION = "priv_key_extension";
 	private static final String PUB_KEY_EXTENSION = "pub_key_extension";
 	private static final String TRANS_AMOUNT = "trans_amount";
@@ -45,6 +46,10 @@ public class PropertiesManager {
 	
 	public String getKeyGenAlgorithm() {
 		return props.getProperty(PropertiesManager.KEYGEN_ALGORITHM);
+	}
+	
+	public String getSignatureAlgorithm() {
+		return props.getProperty(PropertiesManager.SIGNATURE_ALGORITHM);
 	}
 	
 	public String getPrivKeyExtension() {

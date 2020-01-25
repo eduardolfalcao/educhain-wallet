@@ -9,17 +9,19 @@ import java.security.SignatureException;
 import org.apache.log4j.Logger;
 
 import br.com.educhainwallet.model.Transaction;
+import br.com.educhainwallet.setup.PropertiesManager;
 
 public class Signer {
 
 	private static final Logger LOGGER = Logger.getLogger(Signer.class);
+	private static final String SIGNATURE_ALGORITHM = PropertiesManager.getInstance().getSignatureAlgorithm();
 
 	public static byte[] sign(Transaction trans, PrivateKey privKey) {
 
 		Signature sign;
 		byte[] signature = null;
 		try {
-			sign = Signature.getInstance("SHA256withDSA");
+			sign = Signature.getInstance(SIGNATURE_ALGORITHM);
 			sign.initSign(privKey);			
 			sign.update(trans.toString().getBytes());
 
