@@ -45,7 +45,7 @@ public class MemPoolUtils {
 		transJson.addProperty("signature", Base64.getEncoder().encodeToString(trans.getSignature()));
 		transJson.addProperty("amount", trans.getAmount());
 		transJson.addProperty("fee", trans.getFee());
-//		transJson.addProperty("creationTime", Transaction.formatter.format(trans.getCreationTime()));
+		transJson.addProperty("creationTime", trans.getCreationTime());
 		transJson.addProperty("uniqueID", trans.getUniqueID());
 		
 		con.setDoOutput(true);
