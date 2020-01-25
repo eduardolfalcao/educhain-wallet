@@ -39,8 +39,6 @@ public class MemPoolUtils {
 	public static boolean sendTransaction(Transaction trans) throws InvalidKeySpecException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		HttpURLConnection con = openConnection(URL_MEM_POOL, HttpMethod.POST.toString());
 		
-		System.out.println("########## Signature hashCode: "+Arrays.hashCode(trans.getSignature()));
-		
 		JsonObject transJson = new JsonObject();
 		transJson.addProperty("sender", Base64.getEncoder().encodeToString(trans.getSender()));
 		transJson.addProperty("receiver", Base64.getEncoder().encodeToString(trans.getReceiver()));
