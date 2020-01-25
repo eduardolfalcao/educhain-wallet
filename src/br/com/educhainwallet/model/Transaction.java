@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
-import br.com.educhainwallet.setup.PropertiesManager;
+import br.com.educhainwallet.config.PropertiesManager;
 
 public class Transaction implements Comparable<Transaction>, Serializable {
 

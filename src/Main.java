@@ -9,8 +9,8 @@ import java.util.Base64;
 
 import br.com.educhainwallet.KeyUtils;
 import br.com.educhainwallet.Signer;
+import br.com.educhainwallet.config.PropertiesManager;
 import br.com.educhainwallet.model.Transaction;
-import br.com.educhainwallet.setup.PropertiesManager;
 import br.com.educhainwallet.system.communication.MemPoolUtils;
 
 public class Main {

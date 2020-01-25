@@ -17,7 +17,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.apache.log4j.Logger;
 
-import br.com.educhainwallet.setup.PropertiesManager;
+import br.com.educhainwallet.config.PropertiesManager;
 
 public class KeyUtils {
 	

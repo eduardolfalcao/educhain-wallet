@@ -14,8 +14,8 @@ import org.springframework.http.HttpMethod;
 
 import com.google.gson.JsonObject;
 
+import br.com.educhainwallet.config.PropertiesManager;
 import br.com.educhainwallet.model.Transaction;
-import br.com.educhainwallet.setup.PropertiesManager;
 
 public class MemPoolUtils {
 	
